@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Locations Data Viewer</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<h1>Locations Data Visualization</h1>
+<p>아래는 위도와 경도 데이터를 시각화한 그래프입니다:</p>
+
+<!-- Chart.js를 렌더링할 캔버스 -->
+<canvas id="locationsChart" width="400" height="200"></canvas>
+
+<script th:inline="javascript">
+    // Thymeleaf에서 전달받은 데이터를 JSON으로 직렬화
+    const locationsData = /*[[${locations}]]*/ [];
+    console.log("Received locations data from Thymeleaf:", locationsData);
+
+    if (locationsData && locationsData.length > 0) {
+        console.log("Processing data for Chart.js:", locationsData.map(location => ({
+            x: parseFloat(location.latitude),
+            y: parseFloat(location.longitude)
+        })));
+
+        // Chart.js로 그래프 생성
+        const ctx = document.getElementById('locationsChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'scatter', // 스캐터 플롯
+            data: {
+                datasets: [{
+                    label: 'Locations',
+                    data: locationsData.map(location => ({
+                        x: parseFloat(location.latitude),
+                        y: parseFloat(location.longitude)
+                    })),
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    pointRadius: 5 // 점 크기
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: 'Latitude (위도)'
+                        },
+                        min: 35.165, // 위도 최소값
+                        max: 35.170, // 위도 최대값
+                        ticks: {
+                            stepSize: 0.001, // x축 간격
+                            callback: (value) => value.toFixed(5) // 소수점 이하 5자리까지 표시
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Longitude (경도)'
+                        },
+                        min: 128.99, // 경도 최소값
+                        max: 129.01, // 경도 최대값
+                        ticks: {
+                            stepSize: 0.001, // y축 간격
+                            callback: (value) => value.toFixed(5) // 소수점 이하 5자리까지 표시
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => `Latitude: ${context.raw.x.toFixed(5)}, Longitude: ${context.raw.y.toFixed(5)}`
+                        }
+                    }
+                }
+            }
+        });
+    } else {
+        console.error("No data available for graph.");
+        document.body.innerHTML += "<p style='color: red;'>데이터를 가져오지 못했습니다. 서버 응답을 확인하세요.</p>";
+    }
+</script>
+</body>
+</html>
