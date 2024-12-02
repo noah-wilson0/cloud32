@@ -1,0 +1,17 @@
+<!-- custom_marker_with_two_images.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 첫 번째 이미지: 테두리 이미지 -->
+    <item>
+        <bitmap
+            android:src="@drawable/marker"
+        android:gravity="center" />
+    </item>
+
+    <!-- 두 번째 이미지: 사용자 정의 이미지 -->
+    <item>
+        <bitmap
+            android:src="@drawable/ic_home"
+        android:gravity="center" />
+    </item>
+</layer-list>
